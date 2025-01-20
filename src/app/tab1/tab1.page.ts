@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { AppStorageService } from '../app-storage.service';
+import { RECIPE_INVENTORY } from '../app.constants';
 
 @Component({
   selector: 'app-tab1',
@@ -7,9 +10,13 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class Tab1Page {
-  constructor() {}
+  
     newIngredient: string = '';
     ingredients: string[] = [];
+    recipe: [] = []
+
+    constructor(private platform: Platform, private appStorage: AppStorageService) {}
+
 
   addIngredient() {
     if (this.newIngredient.trim()) 
@@ -29,7 +36,11 @@ export class Tab1Page {
     if (this.ingredients.length > 0)
     {
       console.log(this.ingredients);
+
+
     }
   }
+
+
 
 }
