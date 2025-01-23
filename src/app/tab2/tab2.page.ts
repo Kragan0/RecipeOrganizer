@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { AppStorageService } from '../app-storage.service';
+import { RECIPE_INVENTORY } from '../app.constants';
+import { Recipe } from '../model/recipe';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab2',
@@ -9,43 +13,58 @@ import { Platform } from '@ionic/angular';
 })
 export class Tab2Page {
 
-  selectedTime: string = ''
-  timerDuration: number = 0; // The time the user sets
-  timeLeft: number = 0; // The time left on the timer
-  isTimerRunning: boolean = false; // Flag to track if the timer is running
-  timerInterval: any; // To hold the setInterval reference
+  recipeArray: Recipe[] = []
+  selectedCategory: string = "All";
+  visibleDetails: { [key: number]: boolean } = {};
 
-  constructor(private platform: Platform) {}
+  constructor(
+    private appStorage: AppStorageService, 
+    private alertController: AlertController) {    
+  }
 
-  startTimer() {
-    if (this.timerDuration > 0) {
-      this.timeLeft = this.timerDuration * 60; // Convert minutes to seconds
-      this.isTimerRunning = true;
-
-      // Start the countdown
-      this.timerInterval = setInterval(() => {
-        if (this.timeLeft > 0) {
-          this.timeLeft--;
-        } else {
-          this.stopTimer();
-          this.triggerTimerEnd();
-        }
-      }, 1000);
+  async ionViewDidEnter() {
+    const data = await this.appStorage.get(RECIPE_INVENTORY)
+  
+    if (data)
+    {
+      this.recipeArray = data      
     }
   }
-
-  stopTimer() {
-    clearInterval(this.timerInterval); // Stop the timer
-    this.isTimerRunning = false;
+  filteredRecipes() {
+    if (this.selectedCategory === "All") {
+      return this.recipeArray;
+    }
+    return this.recipeArray.filter((recipe) => recipe.category === this.selectedCategory);
   }
 
-  triggerTimerEnd() {
-    // You can use Ionic's Toast, Alert, or Sound
-    alert('Time is up!');
-    // Alternatively, you can use the Vibration API or Play Sound
-    // this.platform.ready().then(() => {
-    //   navigator.vibrate(1000); // Vibrates for 1 second
-    // });
-
+  async confirmDelete(index: number) {
+    console.log('Deleting item with index:', index); 
+    const alert = await this.alertController.create({
+      header: 'Confirm Delete',
+      message: `Are you sure you want to delete "${this.recipeArray[index].name}"?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => this.deleteRecipe(index),
+        },
+      ],
+    });
+  
+    await alert.present();
   }
+
+  async deleteRecipe(index: number) {
+    this.recipeArray.splice(index, 1); 
+    await this.appStorage.set(RECIPE_INVENTORY, this.recipeArray); 
+  }
+
+  toggleDetails(index: number) {
+    this.visibleDetails[index] = !this.visibleDetails[index];
+  }
+
 }

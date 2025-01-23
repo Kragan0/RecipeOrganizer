@@ -12,16 +12,38 @@
       <ion-title size="large">Kuchárka</ion-title>
     </ion-toolbar>
   </ion-header>
-<!-- 
-  <ion-button (click)="startTimer()" color="primary" expand="block">Start Timer</ion-button>
-
-  <ion-item *ngIf="isTimerRunning">
-    <ion-label>Time Left:</ion-label>
-    <ion-text>{{ timeLeft }} minutes</ion-text>
+  
+  <ion-item>
+    <ion-label>Select Category:</ion-label>
+    <ion-select [(ngModel)]="selectedCategory" placeholder="Select Category">
+      <ion-select-option value="All">All</ion-select-option>
+      <ion-select-option value="Main Course">Main Course</ion-select-option>
+      <ion-select-option value="Dessert">Dessert</ion-select-option>
+      <ion-select-option value="Appetizer">Appetizer</ion-select-option>
+      <ion-select-option value="Soup">Soup</ion-select-option>  
+    </ion-select>
   </ion-item>
 
-  <ion-button *ngIf="isTimerRunning" (click)="stopTimer()" color="danger" expand="block">Stop Timer</ion-button> -->
+  <ion-list>
+    <div *ngFor="let recipe of filteredRecipes(); let i = index" >
+      <ion-item (click)="toggleDetails(i)">
+        <ion-label>
+          <h2>{{ recipe.name }}</h2>
+          <p>Category: {{ recipe.category }}</p>
+        </ion-label>
+        <ion-button slot="end" color="danger" (click)="confirmDelete(i); $event.stopPropagation()">
+          Delete
+        </ion-button>
+      </ion-item>
 
-
+      <div *ngIf="visibleDetails[i]" class="details-container">
+        <ion-list>
+          <ion-item *ngFor="let ingredient of recipe.ingredients">
+            {{ ingredient }}
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ion-list>
 
 </ion-content>

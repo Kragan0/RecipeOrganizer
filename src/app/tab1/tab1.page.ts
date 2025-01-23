@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { AppStorageService } from '../app-storage.service';
 import { RECIPE_INVENTORY } from '../app.constants'; 
 import { Recipe } from '../model/recipe'
+import { DarkmodeService } from '../darkmode.service';
 
 @Component({
   selector: 'app-tab1',
@@ -16,10 +17,14 @@ export class Tab1Page {
     ingredients: string[] = [];
     recipeName: string = '';
     category: string = 'Main Course';
-    recipe: [] = []
+    recipeArray: Recipe[] = [];
 
-    constructor(private platform: Platform, private appStorage: AppStorageService) {}
+    constructor(private platform: Platform, private appStorage: AppStorageService, public darkmode: DarkmodeService) {}
 
+  ngOnInit()
+  {
+    this.darkmode.init();
+  }
 
   addIngredient() {
     if (this.newIngredient.trim()) 
@@ -35,9 +40,9 @@ export class Tab1Page {
     
   }
 
-  removeIngredient() {
+  removeIngredients() {
     if (this.ingredients.length > 0)
-      this.ingredients.pop();
+      this.ingredients = []
     else
     {
       console.log('No ingredients to remove');
@@ -46,8 +51,14 @@ export class Tab1Page {
   onSubmit() {
     if (this.ingredients.length > 0 &&  this.recipeName != '')
     {
-      console.log(this.ingredients);
+      
       const newRecipe = new Recipe(this.recipeName, this.ingredients, this.category)
+
+      console.log(newRecipe);
+
+      this.recipeArray.unshift(newRecipe)      
+      
+      this.appStorage.set(RECIPE_INVENTORY, this.recipeArray)
       this.resetForm();
     }
   }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DarkmodeService } from '../darkmode.service';
 
 @Component({
   selector: 'app-tab3',
@@ -7,8 +8,10 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class Tab3Page {
-  isDarkMode = true;
-  constructor() {
-    
+  constructor(public darkmode: DarkmodeService, ) {
+     
   } 
+  ngOnInit() {
+    this.darkmode.init();
+  }
 }
