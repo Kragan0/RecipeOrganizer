@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { AppStorageService } from '../app-storage.service';
-import { RECIPE_INVENTORY } from '../app.constants';
+import { RECIPE_INVENTORY } from '../app.constants'; 
+import { Recipe } from '../model/recipe'
 
 @Component({
   selector: 'app-tab1',
@@ -13,6 +14,8 @@ export class Tab1Page {
   
     newIngredient: string = '';
     ingredients: string[] = [];
+    recipeName: string = '';
+    category: string = 'Main Course';
     recipe: [] = []
 
     constructor(private platform: Platform, private appStorage: AppStorageService) {}
@@ -24,6 +27,14 @@ export class Tab1Page {
       this.newIngredient = '';
   }
 
+  resetForm() {
+    this.newIngredient = '';
+    this.ingredients = [];
+    this.recipeName = '';
+    this.category = 'Main Course';
+    
+  }
+
   removeIngredient() {
     if (this.ingredients.length > 0)
       this.ingredients.pop();
@@ -33,14 +44,15 @@ export class Tab1Page {
     }
   }
   onSubmit() {
-    if (this.ingredients.length > 0)
+    if (this.ingredients.length > 0 &&  this.recipeName != '')
     {
       console.log(this.ingredients);
-
-
+      const newRecipe = new Recipe(this.recipeName, this.ingredients, this.category)
+      this.resetForm();
     }
   }
-
-
+  deleteIngredient(index: number) {
+    this.ingredients.splice(index, 1);
+  }
 
 }

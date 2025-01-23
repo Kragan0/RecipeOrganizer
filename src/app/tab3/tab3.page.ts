@@ -7,7 +7,8 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class Tab3Page {
-
-  constructor() {}
-
+  isDarkMode = true;
+  constructor() {
+    
+  } 
 }
